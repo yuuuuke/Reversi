@@ -32,14 +32,17 @@ val CellSize: Int by lazy {
 }
 
 @Composable
-fun BoardView(uiState: UiState) {
+fun BoardView(uiState: UiState,onClick:(index:Int)->Unit) {
     Canvas(
         modifier = Modifier
             .width((CellSize * 8).dp)
             .height((CellSize * 8).dp)
-            .pointerInput(Unit){
+            .pointerInput(Unit) {
                 detectTapGestures {
-                    Log.v("zwp","${it.x}//"+it.y)
+                    val column = it.x / CellSize.px
+                    val row = it.y / CellSize.px
+                    val index = row.toInt() * 8 + column.toInt()
+                    onClick(index)
                 }
             }
     ) {
@@ -63,16 +66,19 @@ fun BoardView(uiState: UiState) {
                     paint
                 )
             }
-            for(i in 0 until uiState.Pieces.size){
-                if(uiState.Pieces[i] != EMPTY_PIECE){
-                    val column = i%8
-                    val row = i/8
-                    paint.color = if(uiState.Pieces[i] == RED_PIECE) Color.Red else Color.Blue
+            for (i in 0 until uiState.Pieces.size) {
+                if (uiState.Pieces[i] != EMPTY_PIECE) {
+                    val column = i % 8
+                    val row = i / 8
+                    paint.color = if (uiState.Pieces[i] == RED_PIECE) Color.Red else Color.Blue
                     paint.style = PaintingStyle.Fill
-                    val offset = Offset(column* CellSize.px+ CellSize.px*0.5f,row* CellSize.px*1f+ CellSize.px*0.5f)
-                    it.drawCircle(offset, CellSize.px*0.3f,paint)
+                    val offset = Offset(
+                        column * CellSize.px + CellSize.px * 0.5f,
+                        row * CellSize.px * 1f + CellSize.px * 0.5f
+                    )
+                    it.drawCircle(offset, CellSize.px * 0.3f, paint)
                     paint.color = Color.White
-                    it.drawCircle(offset,2f,paint)
+                    it.drawCircle(offset, 2f, paint)
                 }
             }
         }
